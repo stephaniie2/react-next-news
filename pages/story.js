@@ -1,10 +1,10 @@
 import fetch from "isomorphic-fetch";
 import Error from "next/error";
 import Layout from "../components/Layout";
+import CommentList from '../components/CommentList';
 
 class Story extends React.Component {
-  static async getInitialProps({req, res, query}) {
-    console.log('query', query);
+  static async getInitialProps({ req, res, query }) {
     let story;
     try {
       const storyId = query.id;
@@ -20,7 +20,6 @@ class Story extends React.Component {
   }
   render() {
     const { story } = this.props;
-    console.log(story);
     if (!story) return <Error statusCode={503} />;
     return (
       <Layout title={story.title}>
@@ -29,11 +28,15 @@ class Story extends React.Component {
             <a href={story.url}>{story.title}</a>
           </h1>
           <div className="story-details">
-            
-            <strong>{story.points}</strong>
-            <strong>{story.comments_count}</strong>
+            <strong>{story.points} points</strong>
+            <strong>{story.comments_count} comments</strong>
             <strong>{story.time_ago}</strong>
           </div>
+          {story.comments.length > 0 ? (
+            <CommentList comments={story.comments} />
+          ) : (
+            <div>No comments for this story</div>
+          )}
         </main>
 
         <style jsx>{`
@@ -50,13 +53,13 @@ class Story extends React.Component {
             color: #333;
             text-decoration: none;
           }
-          .story-title a: hover {
+          .story-titlea: hover {
             text-decoration: underline;
           }
           .story-details {
             font-size: 0.8rem;
             padding-bottom: 1em;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             margin-bottom: 1em;
           }
           .story-details strong {
